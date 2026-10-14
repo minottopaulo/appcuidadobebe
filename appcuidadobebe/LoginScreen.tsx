@@ -1,5 +1,5 @@
 import { useState } from 'react'
-
+import { useNavigation } from '@react-navigation/native';
 import{
     StyleSheet, 
     Text, 
@@ -11,9 +11,10 @@ import{
 export default function LoginScrean(){
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const navigation = useNavigation(); 
 
     function entrar(){
-        console.log('Tentando entrar com: ',email, senha ); 
+        navigation.navigate('CadastroBebe' as never); 
     }
     return (
         <View style={styles.container}>
