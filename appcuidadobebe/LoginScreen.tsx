@@ -18,7 +18,7 @@ export default function LoginScrean(){
     }
     return (
         <View style={styles.container}>
-            <Text style={styles.titulo}> Login </Text>
+            <Text style={styles.titulo}> Faça seu login com </Text>
             <Text style={styles.subtitulo}> Acompanhe os cuidados do seu bebê em um só lugar </Text>
 
         <View style={styles.botoesSociais}>
@@ -33,7 +33,7 @@ export default function LoginScrean(){
 
         <TextInput 
             style={styles.input}
-            placeholder="E-mail"
+            placeholder="example@gmail.com"
             placeholderTextColor="#999"
             value={email}
             onChangeText={setEmail}
@@ -42,14 +42,14 @@ export default function LoginScrean(){
         />
         <TextInput
             style={styles.input}
-            placeholder="Senha"
+            placeholder="passorword"
             placeholderTextColor="#999"
             value={senha}
             onChangeText={setSenha}
             secureTextEntry
         />
         <Pressable>
-            <Text style={styles.esqueciSenha}>Esqueci minha senha</Text>
+            <Text style={styles.esqueciSenha}>Esqueci minha senha?</Text>
         </Pressable>
         
         <Pressable style={styles.botaoEntrar} onPress={entrar}>
@@ -57,7 +57,10 @@ export default function LoginScrean(){
         </Pressable>
         
         <Text style={styles.criarConta}>
-            Não tem conta? <Text style={styles.criarContaLink}>Criar conta</Text>
+            Não tem conta? 
+        <Text style={styles.criarContaLink}>
+            Criar conta
+        </Text>
         </Text>
         </View>
     );

@@ -3,9 +3,10 @@ import { StyleSheet, Text, Pressable } from 'react-native';
 
 type Props = {
   rotulo: string;
+  cor: string;
 };
 
-export default function RegistroBotao({ rotulo }: Props) {
+export default function RegistroBotao({ rotulo, cor }: Props) {
   const [ultimoRegistro, setUltimoRegistro] = useState<Date | null>(null);
 
   function registrar() {
