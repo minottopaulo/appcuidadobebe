@@ -1,12 +1,7 @@
 import { useState } from 'react'
+import { StyleSheet, Text, TextInput, Pressable, View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import{
-    StyleSheet, 
-    Text, 
-    View,
-    TextInput, 
-    Pressable,
-} from 'react-native';
+
 
 export default function LoginScrean(){
     const [email, setEmail] = useState('');
@@ -18,6 +13,11 @@ export default function LoginScrean(){
     }
     return (
         <View style={styles.container}>
+            <Image
+            source={require('./assets/login.png')}
+            style={styles.ilustracao}
+            resizeMode="contain"
+            />
             <Text style={styles.titulo}> Faça seu login com </Text>
             <Text style={styles.subtitulo}> Acompanhe os cuidados do seu bebê em um só lugar </Text>
 
@@ -140,5 +140,9 @@ criarConta: {
     criarContaLink: {
     color: '#2E5E44',
     fontWeight: 'bold',
+    },
+ilustracao: {
+    width: '100%',
+    height: 220,
     },
 });

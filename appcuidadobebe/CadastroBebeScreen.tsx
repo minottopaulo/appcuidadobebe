@@ -1,44 +1,58 @@
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, Pressable, View } from 'react-native';
+import { StyleSheet, Text, TextInput, Pressable, View, Image } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from './Type';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CadastroBebe'>;
 
-export default function CadastroBebeScreen ({navigation}: Props) {
+export default function CadastroBebeScreen({ navigation }: Props) {
     const [nome, setNome] = useState('');
-    function continuar(){
-        if (nome.trim()===''){
-            return;
-        }
-        navigation.navigate('Home', { nomeBebe: nome.trim() });
-    }
-    return (
-        <View style={styles.container}>
-            <Text style={styles.titulo}>Cadastro do seu bebê.</Text>
-            <Text style={styles.subtitulo}>Como se chama seu pequeno?</Text>
 
-            <TextInput
-            style={styles.input}
-            placeholder="Nome do bebê"
-            placeholderTextColor="#999"
-            value={nome}
-            onChangeText={setNome}
-            autoCapitalize="words"
-            />
-            <Pressable style={styles.botao} onPress={continuar}>
-                <Text style={styles.textoBotao}>Continuar</Text>
-            </Pressable>
-        </View> 
-    ); 
+    function continuar() {
+        if (nome.trim() === '') {
+        return;
+    }
+    navigation.navigate('Home', { nomeBebe: nome.trim() });
+    }
+
+    return (
+    <View style={styles.container}>
+        <Image
+        source={require('./assets/cadastrobebe.png')}
+        style={styles.ilustracao}
+        resizeMode="contain"
+        />
+
+        <Text style={styles.titulo}>Cadastro do seu bebê.</Text>
+        <Text style={styles.subtitulo}>Como se chama seu pequeno?</Text>
+
+        <TextInput
+        style={styles.input}
+        placeholder="Nome do bebê"
+        placeholderTextColor="#999"
+        value={nome}
+        onChangeText={setNome}
+        autoCapitalize="words"
+        />
+
+        <Pressable style={styles.botao} onPress={continuar}>
+            <Text style={styles.textoBotao}>Continuar</Text>
+        </Pressable>
+        </View>
+    );
 }
-const styles=StyleSheet.create({
-    container: {
+
+const styles = StyleSheet.create({
+container: {
     flex: 1,
     backgroundColor: '#ffffff',
     paddingHorizontal: 24,
-    paddingTop: 120,
+    paddingTop: 60,
     gap: 12,
+    },
+    ilustracao: {
+    width: '100%',
+    height: 220,
     },
 titulo: {
     fontSize: 28,
@@ -46,7 +60,7 @@ titulo: {
     color: '#2E5E44',
     textAlign: 'center',
     },
-subtitulo: {
+    subtitulo: {
     fontSize: 14,
     color: '#666666',
     textAlign: 'center',
