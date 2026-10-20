@@ -9,11 +9,15 @@ import {
   View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RootStackParamList } from './Type';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const flutuar = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -35,8 +39,17 @@ export default function LoginScreen() {
     ).start();
   }, []);
 
-  function entrar() {
-    navigation.navigate('CadastroBebe' as never);
+  async function entrar() {
+    await AsyncStorage.setItem('logado', 'sim');
+    const nome = await AsyncStorage.getItem('nomeBebe');
+    if (nome) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home', params: { nomeBebe: nome } }],
+      });
+    } else {
+      navigation.navigate('CadastroBebe');
+    }
   }
 
   return (
@@ -65,7 +78,7 @@ export default function LoginScreen() {
 
       <TextInput
         style={styles.input}
-        placeholder="example@gmail.com"
+        placeholder="Exemplo@gmail.com"
         placeholderTextColor="#ffffff"
         value={email}
         onChangeText={setEmail}

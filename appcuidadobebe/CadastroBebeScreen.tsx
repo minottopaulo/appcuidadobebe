@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -36,13 +37,14 @@ export default function CadastroBebeScreen({ navigation }: Props) {
     ).start();
   }, []);
 
-  function continuar() {
-    if (nome.trim() === '') {
-      return;
-    }
-    navigation.navigate('Home', { nomeBebe: nome.trim() });
+async function continuar() {
+  const nomeLimpo = nome.trim();
+  if (nomeLimpo === '') {
+    return;
   }
-
+  await AsyncStorage.setItem('nomeBebe', nomeLimpo);
+  navigation.replace('Home', { nomeBebe: nomeLimpo });
+}
   return (
     <View style={styles.container}>
       <Animated.Image
