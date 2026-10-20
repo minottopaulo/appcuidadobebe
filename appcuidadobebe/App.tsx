@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BoasVindasScreen from './BoasVindasScreen';
 import LoginScreen from './LoginScreen';
 import CadastroBebeScreen from './CadastroBebeScreen';
 import ScreenHome from './ScreenHome';
@@ -38,9 +39,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={logado && nomeBebe ? 'Home' : 'Login'}
+        initialRouteName={logado && nomeBebe ? 'Home' : 'BoasVindas'}
         screenOptions={{ headerShown: false }}
       >
+        <Stack.Screen name="BoasVindas" component={BoasVindasScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="CadastroBebe" component={CadastroBebeScreen} />
         <Stack.Screen
@@ -49,7 +51,7 @@ export default function App() {
           initialParams={{ nomeBebe: nomeBebe ?? '' }}
         />
       </Stack.Navigator>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </NavigationContainer>
   );
 }

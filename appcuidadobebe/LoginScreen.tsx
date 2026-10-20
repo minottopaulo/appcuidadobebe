@@ -1,43 +1,26 @@
-import { useEffect, useRef, useState } from 'react';
+  import { COR_FUNDO, COR_TEXTO, COR_ESCURA, COR_DESTAQUE } from './theme';
+import { useState } from 'react';
 import {
-  Animated,
-  Easing,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  Pressable,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from './Type';
+import Ursinho from './Ursinho';
 
-export default function LoginScreen() {
+type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
+
+
+export default function LoginScreen({ navigation }: Props) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const flutuar = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(flutuar, {
-          toValue: -12,
-          duration: 1500,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(flutuar, {
-          toValue: 0,
-          duration: 1500,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
 
   async function entrar() {
     await AsyncStorage.setItem('logado', 'sim');
@@ -53,85 +36,112 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Animated.Image
-        source={require('./assets/login.png')}
-        style={[styles.ilustracao, { transform: [{ translateY: flutuar }] }]}
-        resizeMode="contain"
-      />
-
-      <Text style={styles.titulo}>Faça seu login com</Text>
-      <Text style={styles.subtitulo}>
-        Acompanhe os cuidados do seu bebê em um só lugar
-      </Text>
-
-      <View style={styles.botoesSociais}>
-        <Pressable style={styles.botaoSocial}>
-          <Text style={styles.textoBotaoSocial}>Google</Text>
-        </Pressable>
-        <Pressable style={styles.botaoSocial}>
-          <Text style={styles.textoBotaoSocial}>Apple</Text>
-        </Pressable>
-      </View>
-
-      <Text style={styles.divisor}>ou</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Exemplo@gmail.com"
-        placeholderTextColor="#ffffff"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        placeholderTextColor="#ffffff"
-        value={senha}
-        onChangeText={setSenha}
-        secureTextEntry
-      />
-
-      <Pressable>
-        <Text style={styles.esqueciSenha}>Esqueci minha senha?</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <Pressable style={styles.botaoVoltar} onPress={() => navigation.goBack()}>
+        <Text style={styles.voltar}>← Voltar</Text>
       </Pressable>
 
-      <Pressable style={styles.botaoEntrar} onPress={entrar}>
-        <Text style={styles.textoBotaoEntrar}>Entrar</Text>
-      </Pressable>
+      <ScrollView
+        contentContainerStyle={styles.conteudo}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.formulario}>
+          <Text style={styles.titulo}>Que bom te ver de novo</Text>
+          <Text style={styles.subtitulo}>
+            Entre para acompanhar o seu pequeno
+          </Text>
 
-      <Text style={styles.criarConta}>
-        Não tem conta? <Text style={styles.criarContaLink}>Criar conta</Text>
-      </Text>
-    </View>
+          <View style={styles.botoesSociais}>
+            <Pressable style={styles.botaoSocial}>
+              <Text style={styles.textoBotaoSocial}>Google</Text>
+            </Pressable>
+            <Pressable style={styles.botaoSocial}>
+              <Text style={styles.textoBotaoSocial}>Apple</Text>
+            </Pressable>
+          </View>
+
+          <Text style={styles.divisor}>ou</Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="exemplo@gmail.com"
+            placeholderTextColor="rgba(242, 232, 213, 0.6)"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="rgba(242, 232, 213, 0.6)"
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry
+          />
+
+          <Pressable>
+            <Text style={styles.esqueciSenha}>Esqueci minha senha?</Text>
+          </Pressable>
+
+          <Pressable style={styles.botaoEntrar} onPress={entrar}>
+            <Text style={styles.textoBotaoEntrar}>Entrar</Text>
+          </Pressable>
+
+          <Text style={styles.criarConta}>
+            Não tem conta?{' '}
+            <Text style={styles.criarContaLink}>Criar conta</Text>
+          </Text>
+        </View>
+
+        <Ursinho />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#003d188e',
-    paddingHorizontal: 24,
-    paddingTop: 80,
+    backgroundColor: COR_FUNDO,
+  },
+  botaoVoltar: {
+    position: 'absolute',
+    top: 60,
+    left: 28,
+    zIndex: 2,
+  },
+  voltar: {
+    color: COR_TEXTO,
+    fontSize: 14,
+    opacity: 0.85,
+  },
+  conteudo: {
+    flexGrow: 1,
+  },
+  formulario: {
+    paddingHorizontal: 28,
+    paddingTop: 110,
     gap: 12,
   },
-  ilustracao: {
-    width: '100%',
-    height: 220,
-  },
   titulo: {
+    color: COR_TEXTO,
     fontSize: 30,
-    fontWeight: 'bold',
-    color: '#2E5E44',
-    textAlign: 'center',
+    fontWeight: '900',
+    lineHeight: 36,
+    textTransform: 'uppercase',
   },
   subtitulo: {
-    fontSize: 14,
-    color: '#fcfcfc',
-    textAlign: 'center',
-    marginBottom: 12,
+    color: COR_TEXTO,
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    opacity: 0.8,
+    marginBottom: 8,
   },
   botoesSociais: {
     flexDirection: 'row',
@@ -139,54 +149,59 @@ const styles = StyleSheet.create({
   },
   botaoSocial: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#ffffff',
-    borderRadius: 8,
-    paddingVertical: 10,
+    borderWidth: 1.5,
+    borderColor: COR_TEXTO,
+    borderRadius: 999,
+    paddingVertical: 13,
     alignItems: 'center',
   },
   textoBotaoSocial: {
-    fontSize: 14,
-    color: '#ffffff',
+    color: COR_TEXTO,
+    fontSize: 13,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   divisor: {
     textAlign: 'center',
-    color: '#ffffff',
-    marginVertical: 4,
+    color: COR_TEXTO,
+    opacity: 0.7,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ffffff',
-    borderRadius: 8,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.18)',
+    borderRadius: 999,
+    paddingHorizontal: 22,
+    paddingVertical: 14,
     fontSize: 15,
+    color: COR_TEXTO,
   },
   esqueciSenha: {
     textAlign: 'right',
-    color: '#ffffff',
+    color: COR_TEXTO,
     fontSize: 13,
   },
   botaoEntrar: {
-    backgroundColor: '#2E5E44',
-    borderRadius: 8,
-    paddingVertical: 14,
+    backgroundColor: COR_DESTAQUE,
+    borderRadius: 999,
+    paddingVertical: 15,
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: 8,
   },
   textoBotaoEntrar: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: COR_ESCURA,
+    fontSize: 14,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
   criarConta: {
     textAlign: 'center',
-    color: '#2E5E44',
+    color: COR_TEXTO,
     fontSize: 14,
-    marginTop: 8,
+    marginTop: 4,
   },
   criarContaLink: {
-    color: '#ffffff',
     fontWeight: 'bold',
+    textDecorationLine: 'underline',
   },
 });

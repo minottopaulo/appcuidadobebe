@@ -38,7 +38,7 @@ export default function ScreenHome({ route, navigation }: Props) {
     await AsyncStorage.removeItem('logado');
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Login' }],
+      routes: [{ name: 'BoasVindas' }],
     });
   }
 
