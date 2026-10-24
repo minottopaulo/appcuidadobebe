@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, Pressable, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Card } from './cards';
 import ModalValor from './ModalValor';
+import { Alert, Image, StyleSheet, Text, Pressable, View } from 'react-native';
 
 type Props = {
   card: Card;
@@ -105,6 +105,23 @@ export default function RegistroBotao({ card }: Props) {
     }
     return `desde ${inicio}`;
   }
+  function pedirParaApagar() {
+  if (registros.length === 0) {
+    return;
+  }
+  Alert.alert(
+    'Apagar último registro?',
+    `${rotulo}: ${textoDoRegistro(registros[0])}`,
+    [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Apagar',
+        style: 'destructive',
+        onPress: () => salvarLista(registros.slice(1)),
+      },
+    ],
+  );
+}
 
   let vazio = '--:--';
   if (tipo === 'valor') {
@@ -116,10 +133,11 @@ export default function RegistroBotao({ card }: Props) {
   return (
     <>
       <Pressable
-        style={[styles.card, { backgroundColor: cor }]}
-        onPress={aoTocar}
-      >
-        <Image source={icone} style={styles.personagem} resizeMode="contain" />
+      style={[styles.card, { backgroundColor: cor }]}
+      onPress={aoTocar}
+      onLongPress={pedirParaApagar}
+    >
+      <Image source={icone} style={styles.personagem} resizeMode="contain" />
 
         <View style={styles.textos}>
           <Text style={styles.rotulo}>{rotulo}</Text>

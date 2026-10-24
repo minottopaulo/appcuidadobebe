@@ -54,6 +54,10 @@ export default function ScreenHome({ route, navigation }: Props) {
           ))}
         </View>
 
+        <Text style={styles.dica}>
+          Segure um card para apagar o último registro
+        </Text>
+
         <Pressable onPress={sair} style={styles.botaoSair}>
           <Flutuante distancia={4} duracao={2800}>
             <ImageBackground
@@ -97,6 +101,13 @@ const styles = StyleSheet.create({
   },
   lista: {
     gap: 36,
+  },
+  dica: {
+    color: '#ffffff',
+    fontSize: 12,
+    opacity: 0.6,
+    textAlign: 'center',
+    marginTop: 28,
   },
   botaoSair: {
     marginTop: 32,
