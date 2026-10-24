@@ -11,25 +11,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from './Type';
 import RegistroBotao from './RegistroBotao';
 import Flutuante from './Flutuante';
+import { cards } from './cards';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
-
-const cards = [
-  {
-    rotulo: 'Troca de fralda',
-    cor: '#D9A441',
-    icone: require('./assets/fralda.png'),
-  },
-  {
-    rotulo: 'Mamadeira',
-    cor: '#4A90D9',
-    icone: require('./assets/mamadeira.png'),
-  },
-  { rotulo: 'Peso', cor: '#7B5FBF', icone: require('./assets/peso.png') },
-  { rotulo: 'Altura', cor: '#a75f99', icone: require('./assets/altura.png') },
-  { rotulo: 'Banho', cor: '#4AB8C4', icone: require('./assets/banho.png') },
-  { rotulo: 'Sono', cor: '#C4677A', icone: require('./assets/sono.png') },
-];
 
 export default function ScreenHome({ route, navigation }: Props) {
   const { nomeBebe } = route.params;
@@ -66,12 +50,7 @@ export default function ScreenHome({ route, navigation }: Props) {
 
         <View style={styles.lista}>
           {cards.map((card) => (
-            <RegistroBotao
-              key={card.rotulo}
-              rotulo={card.rotulo}
-              cor={card.cor}
-              icone={card.icone}
-            />
+            <RegistroBotao key={card.id} card={card} />
           ))}
         </View>
 

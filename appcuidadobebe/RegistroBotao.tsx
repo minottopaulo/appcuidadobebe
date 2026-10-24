@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react';
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  Pressable,
-  View,
-} from 'react-native';
+import { Image, StyleSheet, Text, Pressable, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Card } from './cards';
+import ModalValor from './ModalValor';
 
 type Props = {
-  rotulo: string;
-  cor: string;
-  icone: ImageSourcePropType;
+  card: Card;
+};
+
+type Registro = {
+  data: string;
+  valor?: number;
 };
 
 function formatarHora(data: Date) {
@@ -22,46 +20,88 @@ function formatarHora(data: Date) {
   });
 }
 
-export default function RegistroBotao({ rotulo, cor, icone }: Props) {
-  const [registros, setRegistros] = useState<Date[]>([]);
-  const chave = `registros:${rotulo}`;
+function formatarNumero(numero: number) {
+  return numero.toString().replace('.', ',');
+}
+
+export default function RegistroBotao({ card }: Props) {
+  const { id, rotulo, cor, incone, tipo, unidade } = card;
+  const [registros, setRegistros] = useState<Registro[]>([]);
+  const [modalAberto, setModalAberto] = useState(false);
+  const chave = `registros:${id}`;
 
   useEffect(() => {
     async function carregar() {
       const salvo = await AsyncStorage.getItem(chave);
       if (salvo !== null) {
-        const datas: string[] = JSON.parse(salvo);
-        setRegistros(datas.map((texto) => new Date(texto)));
+        const lista: (string | Registro)[] = JSON.parse(salvo);
+        setRegistros(
+          lista.map((item) => (typeof item === 'string' ? { data: item } : item)),
+        );
       }
     }
     carregar();
   }, []);
 
-  async function registrar() {
-    const novos = [new Date(), ...registros].slice(0, 3);
+  async function guardar(novo: Registro) {
+    const novos = [novo, ...registros].slice(0, 3);
     setRegistros(novos);
     await AsyncStorage.setItem(chave, JSON.stringify(novos));
   }
 
-  return (
-    <Pressable
-      style={[styles.card, { backgroundColor: cor }]}
-      onPress={registrar}
-    >
-      <Image source={icone} style={styles.personagem} resizeMode="contain" />
+  function aoTocar() {
+    if (tipo === 'valor') {
+      setModalAberto(true);
+    } else {
+      guardar({ data: new Date().toISOString() });
+    }
+  }
 
-      <View style={styles.textos}>
-        <Text style={styles.rotulo}>{rotulo}</Text>
-        <Text style={styles.horario}>
-          {registros.length > 0 ? formatarHora(registros[0]) : '--:--'}
-        </Text>
-        {registros.length > 1 && (
-          <Text style={styles.historico}>
-            {registros.slice(1).map(formatarHora).join('  ·  ')}
+  async function aoSalvarValor(valor: number) {
+    setModalAberto(false);
+    await guardar({ data: new Date().toISOString(), valor });
+  }
+
+  function textoDoRegistro(registro: Registro) {
+    if (tipo === 'valor' && registro.valor !== undefined) {
+      return `${formatarNumero(registro.valor)} ${unidade ?? ''}`.trim();
+    }
+    return formatarHora(new Date(registro.data));
+  }
+
+  const vazio = tipo === 'valor' ? `-- ${unidade ?? ''}`.trim() : '--:--';
+
+  return (
+    <>
+      <Pressable
+        style={[styles.card, { backgroundColor: cor }]}
+        onPress={aoTocar}
+      >
+        <Image source={incone} style={styles.personagem} resizeMode="contain" />
+
+        <View style={styles.textos}>
+          <Text style={styles.rotulo}>{rotulo}</Text>
+          <Text style={styles.horario}>
+            {registros.length > 0 ? textoDoRegistro(registros[0]) : vazio}
           </Text>
-        )}
-      </View>
-    </Pressable>
+          {registros.length > 1 && (
+            <Text style={styles.historico}>
+              {registros.slice(1).map(textoDoRegistro).join('  ·  ')}
+            </Text>
+          )}
+        </View>
+      </Pressable>
+
+      {tipo === 'valor' && (
+        <ModalValor
+          visivel={modalAberto}
+          titulo={rotulo}
+          unidade={unidade ?? ''}
+          onSalvar={aoSalvarValor}
+          onCancelar={() => setModalAberto(false)}
+        />
+      )}
+    </>
   );
 }
 

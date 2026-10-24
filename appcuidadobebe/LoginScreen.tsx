@@ -97,7 +97,6 @@ export default function LoginScreen({ navigation }: Props) {
             <Text style={styles.criarContaLink}>Criar conta</Text>
           </Text>
         </View>
-
         <Ursinho />
       </ScrollView>
     </KeyboardAvoidingView>

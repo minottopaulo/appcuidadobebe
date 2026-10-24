@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from './Type';
 import Ursinho from './Ursinho';
-import { COR_FUNDO, COR_TEXTO, COR_ESCURA, COR_BOTAO } from './theme';
+import { COR_FUNDO, COR_TEXTO, COR_BOTAO } from './theme';
 type Props = NativeStackScreenProps<RootStackParamList, 'BoasVindas'>;
 
 
