@@ -11,6 +11,7 @@ type Props = {
 type Registro = {
   data: string;
   valor?: number;
+  fim?: string;
 };
 
 function formatarHora(data: Date) {
@@ -24,8 +25,16 @@ function formatarNumero(numero: number) {
   return numero.toString().replace('.', ',');
 }
 
+function formatarDuracao(inicio: string, fim: string) {
+  const diferenca = new Date(fim).getTime() - new Date(inicio).getTime();
+  const minutos = Math.max(Math.round(diferenca / 60000), 0);
+  const horas = Math.floor(minutos / 60);
+  const resto = minutos % 60;
+  return horas > 0 ? `${horas}h ${resto}min` : `${resto}min`;
+}
+
 export default function RegistroBotao({ card }: Props) {
-  const { id, rotulo, cor, incone, tipo, unidade } = card;
+  const { id, rotulo, cor, icone, tipo, unidade, textoAndamento } = card;
   const [registros, setRegistros] = useState<Registro[]>([]);
   const [modalAberto, setModalAberto] = useState(false);
   const chave = `registros:${id}`;
@@ -43,15 +52,30 @@ export default function RegistroBotao({ card }: Props) {
     carregar();
   }, []);
 
+  async function salvarLista(lista: Registro[]) {
+    setRegistros(lista);
+    await AsyncStorage.setItem(chave, JSON.stringify(lista));
+  }
+
   async function guardar(novo: Registro) {
-    const novos = [novo, ...registros].slice(0, 3);
-    setRegistros(novos);
-    await AsyncStorage.setItem(chave, JSON.stringify(novos));
+    await salvarLista([novo, ...registros].slice(0, 3));
+  }
+
+  async function alternarPeriodo() {
+    const atual = registros[0];
+    if (atual && atual.fim === undefined) {
+      const fechado = { ...atual, fim: new Date().toISOString() };
+      await salvarLista([fechado, ...registros.slice(1)]);
+    } else {
+      await guardar({ data: new Date().toISOString() });
+    }
   }
 
   function aoTocar() {
     if (tipo === 'valor') {
       setModalAberto(true);
+    } else if (tipo === 'periodo') {
+      alternarPeriodo();
     } else {
       guardar({ data: new Date().toISOString() });
     }
@@ -66,10 +90,28 @@ export default function RegistroBotao({ card }: Props) {
     if (tipo === 'valor' && registro.valor !== undefined) {
       return `${formatarNumero(registro.valor)} ${unidade ?? ''}`.trim();
     }
+    if (tipo === 'periodo') {
+      return registro.fim
+        ? formatarDuracao(registro.data, registro.fim)
+        : (textoAndamento ?? 'Em andamento');
+    }
     return formatarHora(new Date(registro.data));
   }
 
-  const vazio = tipo === 'valor' ? `-- ${unidade ?? ''}`.trim() : '--:--';
+  function detalheDoPeriodo(registro: Registro) {
+    const inicio = formatarHora(new Date(registro.data));
+    if (registro.fim) {
+      return `${inicio} → ${formatarHora(new Date(registro.fim))}`;
+    }
+    return `desde ${inicio}`;
+  }
+
+  let vazio = '--:--';
+  if (tipo === 'valor') {
+    vazio = `-- ${unidade ?? ''}`.trim();
+  } else if (tipo === 'periodo') {
+    vazio = '--';
+  }
 
   return (
     <>
@@ -77,13 +119,16 @@ export default function RegistroBotao({ card }: Props) {
         style={[styles.card, { backgroundColor: cor }]}
         onPress={aoTocar}
       >
-        <Image source={incone} style={styles.personagem} resizeMode="contain" />
+        <Image source={icone} style={styles.personagem} resizeMode="contain" />
 
         <View style={styles.textos}>
           <Text style={styles.rotulo}>{rotulo}</Text>
           <Text style={styles.horario}>
             {registros.length > 0 ? textoDoRegistro(registros[0]) : vazio}
           </Text>
+          {tipo === 'periodo' && registros.length > 0 && (
+            <Text style={styles.detalhe}>{detalheDoPeriodo(registros[0])}</Text>
+          )}
           {registros.length > 1 && (
             <Text style={styles.historico}>
               {registros.slice(1).map(textoDoRegistro).join('  ·  ')}
@@ -136,6 +181,11 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 28,
     fontWeight: 'bold',
+  },
+  detalhe: {
+    color: '#ffffff',
+    fontSize: 14,
+    opacity: 0.9,
   },
   historico: {
     color: '#ffffff',
